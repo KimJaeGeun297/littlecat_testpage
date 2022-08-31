@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:littlecat_testpage/FileUploadApp.dart';
+import 'package:littlecat_testpage/CatFileUploadApp.dart';
+
+import 'Home.dart';
 
 void main() => runApp(const TestPage());
 
@@ -14,7 +16,7 @@ class TestPage extends StatelessWidget {
       theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
           useMaterial3: true),
-      home: const UploadPage(),
+      home: const Home(),
     );
   }
 }
