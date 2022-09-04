@@ -1,28 +1,26 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:html';
 import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-class DogUploadPage extends StatefulWidget {
-  const DogUploadPage({Key? key}) : super(key: key);
+class DermatosisUploadPage extends StatefulWidget {
+  const DermatosisUploadPage({Key? key}) : super(key: key);
 
   @override
-  State<DogUploadPage> createState() => _DogUploadPageState();
+  State<DermatosisUploadPage> createState() => _DermatosisUploadPageState();
 }
 
-class _DogUploadPageState extends State<DogUploadPage> {
+class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
   String optionText = "Initialized text option";
   Uint8List? uploadedImage;
   Uint8List? responseImage;
   FilePickerResult? sendresult;
-  late String responseResult;
-  static const jsonString = '{"mode": "N", "type": "D"}';
-  final url = 'http://192.168.157.31:8080/littlecat-api/v1/testpage';
+  static const jsonString = '{"mode": "N", "type": "C"}';
+  final url = 'http://localhost:8080/littlecat-api/v1/skin/testpage';
   final sendjson = jsonEncode(jsonString);
-
   PostFile() async {
     if (sendresult != null) {
       final formData = FormData.fromMap({
@@ -37,12 +35,10 @@ class _DogUploadPageState extends State<DogUploadPage> {
           url,
           data: formData,
         );
-        Map<String, dynamic> result = jsonDecode(response.data);
+        print("응답" + response.data.toString());
 
         setState(() {
-          responseImage =
-              base64Decode(result.values.first['eye_detection_image']);
-          responseResult = result['targets'][2]['result'].toString();
+          responseImage = base64Decode(response.data);
         });
       } catch (eee) {
         print(eee.toString());
@@ -61,7 +57,7 @@ class _DogUploadPageState extends State<DogUploadPage> {
           children: <Widget>[
             Container(
               padding: const EdgeInsets.only(bottom: 20),
-              child: const Text("강아지사진", style: TextStyle(fontSize: 30)),
+              child: const Text("피부 질병 분석", style: TextStyle(fontSize: 30)),
             ),
             Center(
               child:
@@ -138,26 +134,19 @@ class _DogUploadPageState extends State<DogUploadPage> {
                         child: const Text("분석 후"),
                       ),
                       Container(
-                          height: 600,
-                          width: 700,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25.0),
-                            border: Border.all(
-                              color: Colors.grey,
-                              width: 1,
-                            ),
+                        height: 500,
+                        width: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25.0),
+                          border: Border.all(
+                            color: Colors.grey,
+                            width: 1,
                           ),
-                          child: responseImage == null
-                              ? null
-                              : Column(
-                                  children: [
-                                    Container(
-                                        height: 570,
-                                        width: 700,
-                                        child: Image.memory(responseImage!)),
-                                    Container(child: Text(responseResult))
-                                  ],
-                                )),
+                        ),
+                        child: responseImage == null
+                            ? null
+                            : Image.memory(responseImage!),
+                      ),
                     ],
                   ))
                 ]),
@@ -185,8 +174,6 @@ class _DogUploadPageState extends State<DogUploadPage> {
                       onPressed: () {
                         setState(() {
                           uploadedImage = null;
-                          responseImage = null;
-                          responseResult = "";
                         });
                       },
                       child: Row(children: [
