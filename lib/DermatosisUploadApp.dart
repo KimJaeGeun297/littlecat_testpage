@@ -18,6 +18,7 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
   Uint8List? uploadedImage;
   Uint8List? responseImage;
   FilePickerResult? sendresult;
+  static bool isLoading = false;
   late String responseResult;
   static const jsonString = '{"mode": "N", "type": "C"}';
   final url = 'http://192.168.157.31:8090/littlecat-api/v1/skin/testpage';
@@ -42,7 +43,8 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
           responseImage =
               base64Decode(result.values.first['skin_disease_detection_image']);
           print(result['targets'].toString());
-          responseResult = result['targets'][1].toString();
+          responseResult = result['targets'][1]['disease_probability'].toString();
+          isLoading=false;
         });
       } catch (eee) {
         print(eee.toString());
@@ -122,6 +124,9 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
                         IconButton(
                           onPressed: () {
                             PostFile();
+                            setState((){
+                              isLoading=true;
+                            });
                           },
                           icon: Icon(Icons.keyboard_arrow_right),
                         ),
@@ -148,7 +153,7 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
                           ),
                         ),
                         child: responseImage == null
-                            ? null
+                            ? (isLoading? (CircularProgressIndicator()):null)
                             : Column(
                           children: [
                             Container(
@@ -156,7 +161,7 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
                               width:700,
                               child: Image.memory(responseImage!)
                             ),
-                            Container(child:Text(responseResult))
+                            Container(child:Text("'disease_probability' : " + responseResult))
                           ],
                         )
                       ),
