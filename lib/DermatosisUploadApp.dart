@@ -43,8 +43,9 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
           responseImage =
               base64Decode(result.values.first['skin_disease_detection_image']);
           print(result['targets'].toString());
-          responseResult = result['targets'][1]['disease_probability'].toString();
-          isLoading=false;
+          responseResult =
+              result['targets'][1]['disease_probability'].toString();
+          isLoading = false;
         });
       } catch (eee) {
         print(eee.toString());
@@ -124,8 +125,8 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
                         IconButton(
                           onPressed: () {
                             PostFile();
-                            setState((){
-                              isLoading=true;
+                            setState(() {
+                              isLoading = true;
                             });
                           },
                           icon: Icon(Icons.keyboard_arrow_right),
@@ -143,28 +144,35 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
                         child: const Text("분석 후"),
                       ),
                       Container(
-                        height: 600,
-                        width: 700,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25.0),
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                        ),
-                        child: responseImage == null
-                            ? (isLoading? (CircularProgressIndicator()):null)
-                            : Column(
-                          children: [
-                            Container(
-                              height:570,
-                              width:700,
-                              child: Image.memory(responseImage!)
+                          height: 600,
+                          width: 700,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25.0),
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1,
                             ),
-                            Container(child:Text("'disease_probability' : " + responseResult))
-                          ],
-                        )
-                      ),
+                          ),
+                          child: responseImage == null
+                              ? (isLoading
+                                  ? (Center(
+                                      child: SizedBox(
+                                      width: 50.0,
+                                      height: 50.0,
+                                      child: CircularProgressIndicator(),
+                                    )))
+                                  : null)
+                              : Column(
+                                  children: [
+                                    Container(
+                                        height: 570,
+                                        width: 700,
+                                        child: Image.memory(responseImage!)),
+                                    Container(
+                                        child: Text("'disease_probability' : " +
+                                            responseResult))
+                                  ],
+                                )),
                     ],
                   ))
                 ]),

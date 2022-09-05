@@ -17,6 +17,7 @@ class _DogUploadPageState extends State<DogUploadPage> {
   String optionText = "Initialized text option";
   Uint8List? uploadedImage;
   Uint8List? responseImage;
+  static bool isLoading = false;
   FilePickerResult? sendresult;
   late String responseResult;
   static const jsonString = '{"mode": "N", "type": "D"}';
@@ -43,6 +44,7 @@ class _DogUploadPageState extends State<DogUploadPage> {
           responseImage =
               base64Decode(result.values.first['eye_detection_image']);
           responseResult = result['targets'][2]['result'].toString();
+          isLoading = false;
         });
       } catch (eee) {
         print(eee.toString());
@@ -122,6 +124,9 @@ class _DogUploadPageState extends State<DogUploadPage> {
                         IconButton(
                           onPressed: () {
                             PostFile();
+                            setState(() {
+                              isLoading = true;
+                            });
                           },
                           icon: Icon(Icons.keyboard_arrow_right),
                         ),
@@ -148,7 +153,14 @@ class _DogUploadPageState extends State<DogUploadPage> {
                             ),
                           ),
                           child: responseImage == null
-                              ? null
+                              ? (isLoading
+                                  ? (Center(
+                                      child: SizedBox(
+                                      width: 50.0,
+                                      height: 50.0,
+                                      child: CircularProgressIndicator(),
+                                    )))
+                                  : null)
                               : Column(
                                   children: [
                                     Container(

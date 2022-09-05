@@ -19,6 +19,7 @@ class _CatUploadPageState extends State<CatUploadPage> {
   Uint8List? responseImage;
   FilePickerResult? sendresult;
   late String responseResult;
+  static bool isLoading = false;
   static const jsonString = '{"mode": "N", "type": "C"}';
   final url = 'http://192.168.157.31:8090/littlecat-api/v1/testpage';
   final sendjson = jsonEncode(jsonString);
@@ -42,6 +43,7 @@ class _CatUploadPageState extends State<CatUploadPage> {
           responseImage =
               base64Decode(result.values.first['eye_detection_image']);
           responseResult = result['targets'][2]['result'].toString();
+          isLoading = false;
         });
       } catch (eee) {
         print(eee.toString());
@@ -121,6 +123,9 @@ class _CatUploadPageState extends State<CatUploadPage> {
                         IconButton(
                           onPressed: () {
                             PostFile();
+                            setState(() {
+                              isLoading = true;
+                            });
                           },
                           icon: Icon(Icons.keyboard_arrow_right),
                         ),
@@ -147,7 +152,14 @@ class _CatUploadPageState extends State<CatUploadPage> {
                             ),
                           ),
                           child: responseImage == null
-                              ? null
+                              ? (isLoading
+                                  ? (Center(
+                                      child: SizedBox(
+                                      width: 50.0,
+                                      height: 50.0,
+                                      child: CircularProgressIndicator(),
+                                    )))
+                                  : null)
                               : Column(
                                   children: [
                                     Container(
