@@ -18,9 +18,11 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
   Uint8List? uploadedImage;
   Uint8List? responseImage;
   FilePickerResult? sendresult;
+  late String responseResult;
   static const jsonString = '{"mode": "N", "type": "C"}';
-  final url = 'http://localhost:8080/littlecat-api/v1/skin/testpage';
+  final url = 'http://192.168.157.31:8090/littlecat-api/v1/skin/testpage';
   final sendjson = jsonEncode(jsonString);
+
   PostFile() async {
     if (sendresult != null) {
       final formData = FormData.fromMap({
@@ -35,10 +37,12 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
           url,
           data: formData,
         );
-        print("응답" + response.data.toString());
-
+        Map<String, dynamic> result = jsonDecode(response.data);
         setState(() {
-          responseImage = base64Decode(response.data);
+          responseImage =
+              base64Decode(result.values.first['skin_disease_detection_image']);
+          print(result['targets'].toString());
+          responseResult = result['targets'][1].toString();
         });
       } catch (eee) {
         print(eee.toString());
@@ -134,8 +138,8 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
                         child: const Text("분석 후"),
                       ),
                       Container(
-                        height: 500,
-                        width: 300,
+                        height: 600,
+                        width: 700,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25.0),
                           border: Border.all(
@@ -145,7 +149,16 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
                         ),
                         child: responseImage == null
                             ? null
-                            : Image.memory(responseImage!),
+                            : Column(
+                          children: [
+                            Container(
+                              height:570,
+                              width:700,
+                              child: Image.memory(responseImage!)
+                            ),
+                            Container(child:Text(responseResult))
+                          ],
+                        )
                       ),
                     ],
                   ))
@@ -174,6 +187,8 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
                       onPressed: () {
                         setState(() {
                           uploadedImage = null;
+                          responseImage = null;
+                          responseResult = "";
                         });
                       },
                       child: Row(children: [

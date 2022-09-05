@@ -20,7 +20,7 @@ class _DogUploadPageState extends State<DogUploadPage> {
   FilePickerResult? sendresult;
   late String responseResult;
   static const jsonString = '{"mode": "N", "type": "D"}';
-  final url = 'http://192.168.157.31:8080/littlecat-api/v1/testpage';
+  final url = 'http://192.168.157.31:8090/littlecat-api/v1/testpage';
   final sendjson = jsonEncode(jsonString);
 
   PostFile() async {
