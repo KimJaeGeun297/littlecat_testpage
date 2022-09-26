@@ -21,7 +21,7 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
   static bool isLoading = false;
   late String responseResult;
   static const jsonString = '{"mode": "N", "type": "C"}';
-  final url = 'http://192.168.157.31:8090/littlecat-api/v1/skin/testpage';
+  final url = 'https://tmaxai.co.kr/api/cv';
   final sendjson = jsonEncode(jsonString);
 
   PostFile() async {
