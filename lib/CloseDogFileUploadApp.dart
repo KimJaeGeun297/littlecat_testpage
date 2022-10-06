@@ -1,27 +1,27 @@
 import 'dart:convert';
-import 'dart:html';
+import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-class DermatosisUploadPage extends StatefulWidget {
-  const DermatosisUploadPage({Key? key}) : super(key: key);
+class CloseDogFileUpload extends StatefulWidget {
+  const CloseDogFileUpload({Key? key}) : super(key: key);
 
   @override
-  State<DermatosisUploadPage> createState() => _DermatosisUploadPageState();
+  State<CloseDogFileUpload> createState() => _CloseDogFileUploadState();
 }
 
-class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
+class _CloseDogFileUploadState extends State<CloseDogFileUpload> {
   String optionText = "Initialized text option";
   Uint8List? uploadedImage;
   Uint8List? responseImage;
-  FilePickerResult? sendresult;
   static bool isLoading = false;
+  FilePickerResult? sendresult;
   late String responseResult;
-  static const jsonString = '{"mode": "N", "type": "C"}';
-  final url = 'https://tmaxai.co.kr/api/cv/skin';
+  static const jsonString = '{"mode": "C", "type": "D"}';
+  final url = 'https://tmaxai.co.kr/api/cv';
   final sendjson = jsonEncode(jsonString);
 
   PostFile() async {
@@ -31,6 +31,7 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
             await MultipartFile.fromBytes(uploadedImage!, filename: "test.jpg"),
         'json': jsonString
       });
+      print(sendjson);
       var dio = new Dio();
       try {
         var response = await dio.post(
@@ -38,12 +39,11 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
           data: formData,
         );
         Map<String, dynamic> result = jsonDecode(response.data);
+
         setState(() {
           responseImage =
-              base64Decode(result.values.first['skin_disease_detection_image']);
-          print(result['targets'].toString());
-          responseResult =
-              result['targets'][1]['disease_probability'].toString();
+              base64Decode(result.values.first['eye_detection_image']);
+          responseResult = result['targets'][2]['result'].toString();
           isLoading = false;
         });
       } catch (eee) {
@@ -63,7 +63,7 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
           children: <Widget>[
             Container(
               padding: const EdgeInsets.only(bottom: 20),
-              child: const Text("피부 질병 분석", style: TextStyle(fontSize: 30)),
+              child: const Text("강아지사진", style: TextStyle(fontSize: 30)),
             ),
             Center(
               child:
@@ -167,9 +167,7 @@ class _DermatosisUploadPageState extends State<DermatosisUploadPage> {
                                         height: 570,
                                         width: 700,
                                         child: Image.memory(responseImage!)),
-                                    Container(
-                                        child: Text("'disease_probability' : " +
-                                            responseResult))
+                                    Container(child: Text(responseResult))
                                   ],
                                 )),
                     ],
